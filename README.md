@@ -16,6 +16,10 @@ The blueprint should be created in a human-readable JSON format that can be easi
 - Don't store vehicles and their paths as they are heavily bound to the terrain?
 - Only store connected systems, no loose PowerLines or ConveyorBelts
 - Instantiate buildings with no legs?
+- Register all Foundations/Buildings(?) in the `FoundationSubsystem` -> `mBuildings`
+- There are a lot of empty entries in there, clean them up?
+- It is a map -> what are the keys of this map?
+- Register all PowerConnections and PowerInputs in the `CircuitSubsystem.FGPowerCircuit_???` -> `mComponents`
 
 ## Buildings
 ### Foundations

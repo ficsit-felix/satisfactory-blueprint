@@ -1,0 +1,184 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://bitowl.github.io/satisfactory-blueprint/schema-0.0.1.json",
+  "title": "Satisfactory Blueprint",
+  "description": "Exchangeable blueprints of Satisfactory factories",
+  "type": "object",
+  "definitions": {
+    "transform": {
+      "type": "object",
+      "required": [
+        "position",
+        "rotation"
+      ],
+      "properties": {
+        "position": {
+          "type": "object",
+          "required": [
+            "x",
+            "y",
+            "z"
+          ],
+          "properties": {
+            "x": {
+              "type": "number"
+            },
+            "y": {
+              "type": "number"
+            },
+            "z": {
+              "type": "number"
+            }
+          }
+        }
+      }
+    },
+    "building": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/smelter"
+        },
+        {
+          "$ref": "#/definitions/constructor"
+        }
+      ]
+    },
+    "baseBuilding": {
+      "type": "object",
+      "description": "base type for all buildings",
+      "required": [
+        "pathName",
+        "transform"
+      ],
+      "properties": {
+        "pathName": {
+          "type": "string"
+        },
+        "transform": {
+          "$ref": "#/definitions/transform"
+        }
+      }
+    },
+    "smelter": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/baseBuilding"
+        },
+        {
+          "type": "object",
+          "description": "Smelter",
+          "properties": {
+            "input": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "constructor": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/baseBuilding"
+        },
+        {
+          "properties": {
+
+          }
+        }
+      ]
+    },
+
+
+    "connection": {
+      "oneOf": [
+        {"$ref": "#/definitions/conveyorBelt"},
+        {"$ref": "#/definitions/powerLine"}
+      ]
+    },
+    "baseConnection": {
+      "type": "object",
+      "properties": {
+        "input": {
+          "type": "string",
+          "description": "Reference to the input building",
+          "format": "uri-reference"
+        }
+      }
+    },
+    "conveyorBelt": {
+      "allOf": [
+        {"$ref": "#/definitions/baseConnection"},
+        {
+          "description": "Conveyor Belt",
+          "required": ["type"],
+          "properties": {
+            "speed": {
+              "type": "string",
+              "enum": ["mk1", "mk2", "mk3", "mk4"]
+            },
+            "type": {
+              "type": "string",
+              "pattern": "conveyorBelt"
+            }
+          }
+        }
+      ]
+    },
+    "powerLine": {
+      "allOf": [
+        {"$ref": "#/definitions/baseConnection"},
+        {
+          "description": "Power Line",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "pattern": "powerLine"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "meta",
+    "buildings"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "description": "version of the blueprint schema",
+      "examples": [
+        "0.0.1"
+      ]
+    },
+    "meta": {
+      "type": "object",
+      "description": "meta information about this blueprint",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        }
+      }
+    },
+    "buildings": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "#/definitions/building"
+      }
+    },
+    "connections": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/connection"
+      }
+    }
+  }
+}
