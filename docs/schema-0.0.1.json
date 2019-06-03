@@ -35,10 +35,12 @@
       "additionalProperties": false,
       "properties": {
         "position": {
-          "$ref": "#/definitions/vector3"
+          "$ref": "#/definitions/vector3",
+          "description": "Poition relative to a reference point"
         },
         "rotation": {
-          "$ref": "#/definitions/vector3"
+          "$ref": "#/definitions/vector3",
+          "description": "Rotation as Euler angles in degrees"
         }
       }
     },
@@ -107,13 +109,16 @@
           "description": "Mark of this connection if the connection type has multiple"
         },
         "input": {
-          "$ref": "#/definitions/connector"
+          "$ref": "#/definitions/connector",
+          "description": "Where the input of this connection connects to"
         },
         "output": {
-          "$ref": "#/definitions/connector"
+          "$ref": "#/definitions/connector",
+          "description": "Where the output of this connection connects to"
         },
         "topTransform": {
-          "$ref": "#/definitions/transform"
+          "$ref": "#/definitions/transform",
+          "description": "Transform of the top part of the conveyor lift"
         },
         "splinePoints": {
           "type": "array",
@@ -145,7 +150,7 @@
       "properties": {
         "pathName": {
           "type": "string",
-          "description": "Reference of the building / connection this is connected to"
+          "description": "Reference of the building & connection this is connected to"
         },
         "connectedSlot": {
           "type": "integer",
@@ -156,6 +161,7 @@
   },
   "required": [
     "schemaVersion",
+    "gameVersion",
     "meta",
     "buildings",
     "connections"
@@ -166,6 +172,13 @@
       "description": "Version of the blueprint schema",
       "examples": [
         "0.0.1"
+      ]
+    },
+    "gameVersion": {
+      "type": "integer",
+      "description": "Build number of the game this blueprint was created for",
+      "examples": [
+        99303
       ]
     },
     "meta": {

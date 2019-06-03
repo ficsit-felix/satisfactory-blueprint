@@ -14,7 +14,7 @@
     "typescript": "^3.5.1"
   },
   "scripts": {
-    "generateSchema": "json2ts docs/schema-0.0.1.json src/schema.d.ts",
+    "generateSchema": "json2ts docs/schema-0.0.1.json src/schema.ts",
     "build": "tsc",
     "build:watch": "tsc --watch",
     "lint": "tslint --project \"./tsconfig.json\"",
@@ -23,5 +23,8 @@
   },
   "files": [
     "lib/**/*"
-  ]
+  ],
+  "dependencies": {
+    "satisfactory-json": "^0.0.9"
+  }
 }

@@ -47,15 +47,15 @@ The blueprint should be created in a human-readable JSON format that can be easi
 #### Build_Wall_1a
 #### Build_Wall_2a ?
 ### Machines
-#### Assembler (Mk1-2)
+#### Assembler (Mk1)
 #### ConveyorSplitter
 #### ConveyorMerger
 #### ConveyorSplitter_Programmable
 #### ConveyorSplitter_Smart
-#### Constructor (Mk1-2)
+#### Constructor (Mk1)
 #### ConveyorPole
 #### ConveyorPoleStackable
-#### Foundry (Mk1-2)
+#### Foundry (Mk1)
 #### GeneratorBiomass
 #### GeneratorCoal
 #### GeneratorFuel
@@ -64,13 +64,13 @@ The blueprint should be created in a human-readable JSON format that can be easi
 #### JumpPadTilted
 #### LandingPad
 #### LookoutTower
-#### Manufacturer (Mk1-2)
+#### Manufacturer (Mk1)
 #### ~~Miner (Mk1-2)~~
 #### ~~OilPump~~
 #### OilRefinery
 #### PowerPole (Mk1-3)
 #### RadarTower
-#### Smelter (Mk1-2)
+#### Smelter (Mk1)
 #### ~~SpaceElevator~~
 #### StorageContainer (Mk1-2)
 #### StoragePlayer
