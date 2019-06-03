@@ -5,159 +5,172 @@
   "description": "Exchangeable blueprints of Satisfactory factories",
   "type": "object",
   "definitions": {
+    "vector3": {
+      "type": "object",
+      "description": "A three component vector",
+      "required": [
+        "x",
+        "y",
+        "z"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "z": {
+          "type": "number"
+        }
+      }
+    },
     "transform": {
       "type": "object",
       "required": [
         "position",
         "rotation"
       ],
+      "additionalProperties": false,
       "properties": {
         "position": {
-          "type": "object",
-          "required": [
-            "x",
-            "y",
-            "z"
-          ],
-          "properties": {
-            "x": {
-              "type": "number"
-            },
-            "y": {
-              "type": "number"
-            },
-            "z": {
-              "type": "number"
-            }
-          }
+          "$ref": "#/definitions/vector3"
+        },
+        "rotation": {
+          "$ref": "#/definitions/vector3"
         }
       }
     },
     "building": {
-      "oneOf": [
-        {
-          "$ref": "#/definitions/smelter"
-        },
-        {
-          "$ref": "#/definitions/constructor"
-        }
-      ]
-    },
-    "baseBuilding": {
       "type": "object",
-      "description": "base type for all buildings",
+      "description": "Describes a building placed in the world",
       "required": [
         "pathName",
+        "className",
         "transform"
       ],
       "properties": {
         "pathName": {
-          "type": "string"
+          "type": "string",
+          "description": "Unique name for this building"
+        },
+        "className": {
+          "type": "string",
+          "description": "Type of the building"
         },
         "transform": {
           "$ref": "#/definitions/transform"
+        },
+        "mark": {
+          "type": "integer",
+          "description": "Mark of this building if the building type has multiple"
+        },
+        "usedRecipe": {
+          "type": "string",
+          "description": "The recipe this building is producing"
+        },
+        "powerShards": {
+          "type": "integer",
+          "description": "Number of power shards inserted into this building"
+        },
+        "overclockRate": {
+          "type": "number",
+          "description": "Rate at which this building is overclocked"
         }
       }
-    },
-    "smelter": {
-      "allOf": [
-        {
-          "$ref": "#/definitions/baseBuilding"
-        },
-        {
-          "type": "object",
-          "description": "Smelter",
-          "properties": {
-            "input": {
-              "type": "string"
-            }
-          }
-        }
-      ]
-    },
-    "constructor": {
-      "allOf": [
-        {
-          "$ref": "#/definitions/baseBuilding"
-        },
-        {
-          "properties": {
-
-          }
-        }
-      ]
     },
 
 
     "connection": {
-      "oneOf": [
-        {"$ref": "#/definitions/conveyorBelt"},
-        {"$ref": "#/definitions/powerLine"}
-      ]
-    },
-    "baseConnection": {
       "type": "object",
+      "description": "Describes a connection that connects two buildings",
+      "required": [
+        "pathName",
+        "className",
+        "transform"
+      ],
       "properties": {
-        "input": {
+        "pathName": {
           "type": "string",
-          "description": "Reference to the input building",
-          "format": "uri-reference"
+          "description": "Unique name for this connection"
+        },
+        "className": {
+          "type": "string",
+          "description": "Type of the connection"
+        },
+        "transform": {
+          "$ref": "#/definitions/transform"
+        },
+        "mark": {
+          "type": "integer",
+          "description": "Mark of this connection if the connection type has multiple"
+        },
+        "input": {
+          "$ref": "#/definitions/connector"
+        },
+        "output": {
+          "$ref": "#/definitions/connector"
+        },
+        "topTransform": {
+          "$ref": "#/definitions/transform"
+        },
+        "splinePoints": {
+          "type": "array",
+          "description": "Spline points of a conveyor belt",
+          "items": {
+            "type": "object",
+            "required": ["location", "arriveTangent", "leaveTangent"],
+            "additionalProperties": false,
+            "properties": {
+              "location": {
+                "$ref": "#/definitions/vector3"
+              },
+              "arriveTangent": {
+                "$ref": "#/definitions/vector3"
+              },
+              "leaveTangent": {
+                "$ref": "#/definitions/vector3"
+              }
+            }
+          }
         }
+
       }
     },
-    "conveyorBelt": {
-      "allOf": [
-        {"$ref": "#/definitions/baseConnection"},
-        {
-          "description": "Conveyor Belt",
-          "required": ["type"],
-          "properties": {
-            "speed": {
-              "type": "string",
-              "enum": ["mk1", "mk2", "mk3", "mk4"]
-            },
-            "type": {
-              "type": "string",
-              "pattern": "conveyorBelt"
-            }
-          }
+    "connector": {
+      "type": "object",
+      "required": ["pathName"],
+      "additionalProperties": false,
+      "properties": {
+        "pathName": {
+          "type": "string",
+          "description": "Reference of the building / connection this is connected to"
+        },
+        "connectedSlot": {
+          "type": "integer",
+          "description": "If the building has multiple slots, the id of the slot"
         }
-      ]
-    },
-    "powerLine": {
-      "allOf": [
-        {"$ref": "#/definitions/baseConnection"},
-        {
-          "description": "Power Line",
-          "required": [
-            "type"
-          ],
-          "properties": {
-            "type": {
-              "type": "string",
-              "pattern": "powerLine"
-            }
-          }
-        }
-      ]
+      }
     }
   },
   "required": [
     "schemaVersion",
     "meta",
-    "buildings"
+    "buildings",
+    "connections"
   ],
   "properties": {
     "schemaVersion": {
       "type": "string",
-      "description": "version of the blueprint schema",
+      "description": "Version of the blueprint schema",
       "examples": [
         "0.0.1"
       ]
     },
     "meta": {
       "type": "object",
-      "description": "meta information about this blueprint",
+      "description": "Meta information about this blueprint",
       "properties": {
         "title": {
           "type": "string"
@@ -169,13 +182,14 @@
     },
     "buildings": {
       "type": "array",
-      "description": "",
+      "description": "Contains all the buildings in this blueprint",
       "items": {
         "$ref": "#/definitions/building"
       }
     },
     "connections": {
       "type": "array",
+      "description": "Contains all the connections in this blueprint",
       "items": {
         "$ref": "#/definitions/connection"
       }
