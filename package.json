@@ -14,17 +14,18 @@
     "typescript": "^3.5.1"
   },
   "scripts": {
-    "generateSchema": "json2ts docs/schema-0.0.1.json src/schema.ts",
+    "generateSchema": "json2ts src/schema.json src/schema.ts",
     "build": "tsc",
     "build:watch": "tsc --watch",
     "lint": "tslint --project \"./tsconfig.json\"",
     "prepublish": "yarn build",
-    "postversion": "git push && git push --tags"
+    "postversion": "./newVersion.sh"
   },
   "files": [
     "lib/**/*"
   ],
   "dependencies": {
-    "satisfactory-json": "^0.0.9"
+    "satisfactory-json": "^0.0.9",
+    "three": "^0.105.2"
   }
 }

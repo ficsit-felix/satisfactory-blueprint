@@ -178,7 +178,7 @@
       "type": "integer",
       "description": "Build number of the game this blueprint was created for",
       "examples": [
-        99303
+        66297
       ]
     },
     "meta": {
