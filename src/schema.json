@@ -1,0 +1,211 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://bitowl.github.io/satisfactory-blueprint/schema-0.0.1.json",
+  "title": "Satisfactory Blueprint",
+  "description": "Exchangeable blueprints of Satisfactory factories",
+  "type": "object",
+  "definitions": {
+    "vector3": {
+      "type": "object",
+      "description": "A three component vector",
+      "required": [
+        "x",
+        "y",
+        "z"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "z": {
+          "type": "number"
+        }
+      }
+    },
+    "transform": {
+      "type": "object",
+      "required": [
+        "position",
+        "rotation"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "position": {
+          "$ref": "#/definitions/vector3",
+          "description": "Poition relative to a reference point"
+        },
+        "rotation": {
+          "$ref": "#/definitions/vector3",
+          "description": "Rotation as Euler angles in degrees"
+        }
+      }
+    },
+    "building": {
+      "type": "object",
+      "description": "Describes a building placed in the world",
+      "required": [
+        "pathName",
+        "className",
+        "transform"
+      ],
+      "properties": {
+        "pathName": {
+          "type": "string",
+          "description": "Unique name for this building"
+        },
+        "className": {
+          "type": "string",
+          "description": "Type of the building"
+        },
+        "transform": {
+          "$ref": "#/definitions/transform"
+        },
+        "mark": {
+          "type": "integer",
+          "description": "Mark of this building if the building type has multiple"
+        },
+        "usedRecipe": {
+          "type": "string",
+          "description": "The recipe this building is producing"
+        },
+        "powerShards": {
+          "type": "integer",
+          "description": "Number of power shards inserted into this building"
+        },
+        "overclockRate": {
+          "type": "number",
+          "description": "Rate at which this building is overclocked"
+        }
+      }
+    },
+
+
+    "connection": {
+      "type": "object",
+      "description": "Describes a connection that connects two buildings",
+      "required": [
+        "pathName",
+        "className",
+        "transform"
+      ],
+      "properties": {
+        "pathName": {
+          "type": "string",
+          "description": "Unique name for this connection"
+        },
+        "className": {
+          "type": "string",
+          "description": "Type of the connection"
+        },
+        "transform": {
+          "$ref": "#/definitions/transform"
+        },
+        "mark": {
+          "type": "integer",
+          "description": "Mark of this connection if the connection type has multiple"
+        },
+        "input": {
+          "$ref": "#/definitions/connector",
+          "description": "Where the input of this connection connects to"
+        },
+        "output": {
+          "$ref": "#/definitions/connector",
+          "description": "Where the output of this connection connects to"
+        },
+        "topTransform": {
+          "$ref": "#/definitions/transform",
+          "description": "Transform of the top part of the conveyor lift"
+        },
+        "splinePoints": {
+          "type": "array",
+          "description": "Spline points of a conveyor belt",
+          "items": {
+            "type": "object",
+            "required": ["location", "arriveTangent", "leaveTangent"],
+            "additionalProperties": false,
+            "properties": {
+              "location": {
+                "$ref": "#/definitions/vector3"
+              },
+              "arriveTangent": {
+                "$ref": "#/definitions/vector3"
+              },
+              "leaveTangent": {
+                "$ref": "#/definitions/vector3"
+              }
+            }
+          }
+        }
+
+      }
+    },
+    "connector": {
+      "type": "object",
+      "required": ["pathName"],
+      "additionalProperties": false,
+      "properties": {
+        "pathName": {
+          "type": "string",
+          "description": "Reference of the building & connection this is connected to"
+        },
+        "connectedSlot": {
+          "type": "integer",
+          "description": "If the building has multiple slots, the id of the slot"
+        }
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "gameVersion",
+    "meta",
+    "buildings",
+    "connections"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "description": "Version of the blueprint schema",
+      "examples": [
+        "0.0.1"
+      ]
+    },
+    "gameVersion": {
+      "type": "integer",
+      "description": "Build number of the game this blueprint was created for",
+      "examples": [
+        66297
+      ]
+    },
+    "meta": {
+      "type": "object",
+      "description": "Meta information about this blueprint",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        }
+      }
+    },
+    "buildings": {
+      "type": "array",
+      "description": "Contains all the buildings in this blueprint",
+      "items": {
+        "$ref": "#/definitions/building"
+      }
+    },
+    "connections": {
+      "type": "array",
+      "description": "Contains all the connections in this blueprint",
+      "items": {
+        "$ref": "#/definitions/connection"
+      }
+    }
+  }
+}
