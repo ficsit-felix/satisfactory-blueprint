@@ -1,7 +1,6 @@
-import { Actor, SaveGame, StructProperty, Property, Component } from 'satisfactory-json';
+import { Actor, SaveGame, StructProperty, Property, Component, ObjectProperty, ArrayProperty, EnumProperty } from 'satisfactory-json';
 import { SatisfactoryBlueprint, Vector3, Building, Connection, Transform } from './schema';
 import { classNameMap } from './mappings';
-import { Euler, Quaternion } from 'three';
 
 /**
  * Creates a new blueprint from the set of actors
@@ -155,7 +154,7 @@ class BlueprintCreator {
 
   private createConveyorPole(building: Building, actor: Actor) {
     // mark of a conveyor pole depends on its height which we can get from the mPoleMesh
-    const poleMesh = getProperty(actor, 'mPoleMesh');
+    const poleMesh = getProperty(actor, 'mPoleMesh') as ObjectProperty;
     if (poleMesh !== undefined) {
       switch (poleMesh.value.pathName) {
         // tslint:disable-next-line: max-line-length
@@ -179,7 +178,7 @@ class BlueprintCreator {
   }
 
   private addCurrentRecipe(building: Building, actor: Actor) {
-    const currentRecipe = getProperty(actor, 'mCurrentRecipe');
+    const currentRecipe = getProperty(actor, 'mCurrentRecipe') as ObjectProperty;
     if (currentRecipe !== undefined) {
       building.usedRecipe = currentRecipe.value.pathName;
     }
@@ -193,11 +192,11 @@ class BlueprintCreator {
     // TODO is this direcly the overclock rate?
     const currentPotential = getProperty(actor, 'mCurrentPotential');
     if (currentPotential !== undefined) {
-      building.overclockRate = currentPotential.value;
+      building.overclockRate = currentPotential.value as number;
     }
 
     // Fetch the amount of power shards from the InventoryPotential
-    const inventoryPotentialPath = getProperty(actor, 'mInventoryPotential');
+    const inventoryPotentialPath = getProperty(actor, 'mInventoryPotential') as ObjectProperty;
     if (inventoryPotentialPath !== undefined) {
       const inventoryPotential = findComponentByName(
         inventoryPotentialPath.value.pathName,
@@ -207,7 +206,7 @@ class BlueprintCreator {
         const inventoryStacks = getPropertyFromComponent(
           inventoryPotential,
           'mInventoryStacks'
-        );
+        ) as ArrayProperty;
         if (inventoryStacks !== undefined) {
           building.powerShards = 0;
           for (const stack of inventoryStacks.value.values) {
@@ -259,7 +258,7 @@ class BlueprintCreator {
   ) {
     this.createConveyorInputOutput(actor, connection, saveGame);
     // conveyor spline
-    const splineData = getProperty(actor, 'mSplineData');
+    const splineData = getProperty(actor, 'mSplineData') as ArrayProperty;
     if (splineData !== undefined) {
       connection.splinePoints = [];
       for (const point of splineData.value.values) {
@@ -300,17 +299,19 @@ class BlueprintCreator {
       const rotationProp = getPropertyFromStructProperty(
         topTransformStruct,
         'Rotation'
-      );
+      ) as StructProperty;
       const translationProp = getPropertyFromStructProperty(
         topTransformStruct,
         'Rotation'
       );
       let rotation = { a: 0, b: 0, c: 0, d: 1 };
       if (rotationProp !== undefined) {
+        // @ts-ignore TODO
         rotation = rotationProp.value;
       }
       let translation = { x: 0, y: 0, z: 0 };
       if (translationProp !== undefined) {
+        // @ts-ignore TODO
         translation = translationProp.value;
       }
       connection.topTransform = this.convertTransform({
@@ -377,7 +378,7 @@ class BlueprintCreator {
       const connectedComponentPath = getPropertyFromComponent(
         component,
         'mConnectedComponent'
-      );
+      ) as ObjectProperty;
       if (connectedComponentPath === undefined) {
         continue;
       }
@@ -399,7 +400,7 @@ class BlueprintCreator {
         connectedSlot = parseInt(lastChar, 10);
       }
 
-      const direction = getPropertyFromComponent(component, 'mDirection');
+      const direction = getPropertyFromComponent(component, 'mDirection') as EnumProperty;
       if (direction === undefined) {
         continue;
       }
@@ -433,13 +434,12 @@ class BlueprintCreator {
     translation: number[];
     scale3d: number[];
   }): Transform {
-    const euler = new Euler().setFromQuaternion(
-      new Quaternion(
-        transform.rotation[0],
-        transform.rotation[1],
-        transform.rotation[2],
-        transform.rotation[3]
-      )
+    const euler = eulerFromQuaternion({
+        x:transform.rotation[0],
+        y:transform.rotation[1],
+        z:transform.rotation[2],
+        w:transform.rotation[3]
+    }
     );
     return {
       position: {
@@ -472,6 +472,38 @@ function rad2Deg(radians: number): number {
 
 function deg2Rad(degrees: number): number {
   return degrees * (Math.PI / 180);
+}
+
+function eulerFromQuaternion(quat: {x:number, y: number, z: number, w:number}): {x:number,y:number,z:number} {
+  let x,y,z;
+
+    // roll (x-axis rotation)
+    const sinr_cosp = 2 * (quat.w * quat.x + quat.y * quat.z);
+    const cosr_cosp = 1 - 2 * (quat.x * quat.x + quat.y * quat.y);
+    x = Math.atan2(sinr_cosp, cosr_cosp);
+
+    // pitch (y-axis rotation)
+    const sinp = 2 * (quat.w * quat.y - quat.z * quat.x);
+    if (Math.abs(sinp) >= 1) {
+       // use 90 degrees if out of range
+      if (sinp < 0) {
+        y = -Math.PI/2;
+      } else {
+        y = Math.PI/2;
+      }
+
+    } else {
+        y = Math.asin(sinp);
+    }
+
+    // yaw (z-axis rotation)
+    const siny_cosp = 2 * (quat.w * quat.z + quat.x * quat.y);
+    const cosy_cosp = 1 - 2 * (quat.y * quat.y + quat.z * quat.z);
+    z = Math.atan2(siny_cosp, cosy_cosp);
+
+  return {
+    x,y,z
+  };
 }
 
 function getProperty(actor: Actor, propertyName: string): Property | undefined {
