@@ -26,6 +26,6 @@
   ],
   "dependencies": {
     "satisfactory-json": "^0.0.9",
-    "three": "^0.105.2"
+    "three": "^0.125.0"
   }
 }
